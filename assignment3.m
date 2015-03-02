@@ -54,19 +54,20 @@ function assignment3_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for assignment3
 handles.output = hObject;
-handles.comPort = 'COM11';
+handles.comPort = 'COM13';
 handles.bufferlength = 200;
-handles.magrawdata = zeros(handles.bufferlength,1);
+%handles.magrawdata = zeros(handles.bufferlength,1);
 handles.index = 1:handles.bufferlength; % 1 to upto 200 increment by one
 handles.alpha = 0.5;
-% set(handles.alphadisp,'String',['Alpha = 'num2str(handles.alpha)]);
-handles.magfiltdata = zeros(handles.bufferlength,1);
 
-handles.tap=2;
-%set(handles.smatap,'String',['SMA Taps = ' num2str(handles.tap)]);
-handles.threshvalue=1;
-handles.threshplot=handles.threshvalue*ones(handles.bufferlength,1);
-handles.threshnum=0;
+handles.magraw_dx = zeros(handles.bufferlength,1);
+handles.magraw_dy = zeros(handles.bufferlength,1);
+handles.magraw_dz = zeros(handles.bufferlength,1);
+
+handles.magfil_dx = zeros(handles.bufferlength,1);
+handles.magfil_dy = zeros(handles.bufferlength,1);
+handles.magfil_dz = zeros(handles.bufferlength,1);
+%handles.magfiltdata = zeros(handles.bufferlength,1);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -95,7 +96,7 @@ if (~exist('handles.serialFlag','var'))
  [handles.accelerometer.s, handles.serialFlag]=setupSerial(handles.comPort);
 end
 guidata(hObject, handles);
-handles.calco=calibrate(handles.accelerometer.s);
+handles.calco = calibrate(handles.accelerometer.s);
 guidata(hObject, handles);
 
 
@@ -129,96 +130,9 @@ function Close_Callback(hObject, eventdata, handles)
 set(handles.start,'UserData',0);
 set(handles.stop,'UserData',1);
 closeSerial
+%guidata(hObject,handles);
 
 
-% --- Executes on selection change in filter.
-function filter_Callback(hObject, eventdata, handles)
-% hObject    handle to filter (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns filter contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from filter
-
-
-% --- Executes during object creation, after setting all properties.
-function filter_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to filter (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-% --- Executes on selection change in popupmenu.
-function popupmenu_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu
-
-
-% --- Executes during object creation, after setting all properties.
-function popupmenu_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function thresh_Callback(hObject, eventdata, handles)
-% hObject    handle to thresh (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of thresh as text
-%        str2double(get(hObject,'String')) returns contents of thresh as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function thresh_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to thresh (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-% --- Executes on selection change in threshVal.
-function threshVal_Callback(hObject, eventdata, handles)
-% hObject    handle to threshVal (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns threshVal contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from threshVal
-
-
-% --- Executes during object creation, after setting all properties.
-function threshVal_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to threshVal (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 function timer(hObject,eventdata,handles)
@@ -229,69 +143,31 @@ function timer(hObject,eventdata,handles)
 axes(handles.axes1)
 % Run while the button string reads 'Stop'
 while (get(handles.start,'UserData'))
- [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
- % Read accelerometer data
- rawmag = sqrt(gx^2+gy^2+gz^2);
- % Calculate magnitude from raw data
- handles.magrawdata = [handles.magrawdata(2:end);rawmag];
- % Put new raw data on end of vector and shift old data up 1 spot
- 
- contents = get(handles.filter,'String'); 
 
- % let the user select the filter 
- if (strcmp(contents{get(handles.filter,'Value')},'Alpha Filter'));
-      % gets the alpha value from the user 
-     % a = handles.magfiltdata(end)
-     % contents = get(handles.popupmenu,'String');
-     % if it a alpha filter set the alpha value choose by ht user
-     alpha = get(handles.popupmenu,'Value');
-     switch alpha
-         case 2
-             alpha = 0.1;
-         case 3
-             alpha = 0.2;
-         case 4
-             alpha = 0.3;
-         case 5
-             alpha = 0.4;
-         case 6
-             alpha = 0.5;
-         case 7
-             alpha = 0.6;
-         case 8
-             alpha = 0.7;
-         case 9
-             alpha = 0.8;
-         case 10
-             alpha = 0.9;
-         case 11
-             alpha = 1;
-     end
-            
-     filtmag =  (1 - alpha)*handles.magfiltdata(end) + alpha*rawmag; 
-     % Calculate filtered magnitude
-     handles.magfiltdata = [handles.magfiltdata(2:end); filtmag];
-     % Put new filtered data on end of vector and shift old data up 1 spot
-     plot(handles.index,handles.magrawdata,'b',handles.index,handles.magfiltdata,'k');
-     % Plot raw and filtered data
- else
-     % if it's a SMA filter let the user choose the threshold parameters 
-     filtmag = mean(handles.magrawdata(end-handles.tap+1:end));
-     handles.magfiltdata = [handles.magfiltdata(2:end); filtmag];
-     handles.threshvalue = get(handles.threshVal,'Value')-1;
-     handles.threshplot = handles.threshvalue*ones(handles.bufferlength,1);
-     if filtmag > handles.threshvalue && ...
-         handles.magfiltdata(end-1)<handles.threshvalue
-         handles.threshnum=handles.threshnum+1;
-         set(handles.thresh,'String',['Threshold Count =' ...
-         num2str(handles.threshnum)])
-     end
-     % Put new filtered data on end of vector and shift old data up 1 spot
-     plot(handles.index,handles.magrawdata,'b',handles.index,handles.magfiltdata,'k',...
-     handles.index,handles.threshplot,'g');
+ % Read accel data
+ [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
+ % Calculate magnitude from raw data
+ rawmag = sqrt(gx^2+gy^2+gz^2);
  
+ % update the vectors with raw data
+ handles.magraw_dx = [handles.magraw_dx(2:end);gx];
+ handles.magraw_dy = [handles.magraw_dy(2:end);gy];
+ handles.magraw_dz = [handles.magraw_dz(2:end);gz];
  
- end
+ % setup the filters  
+ filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*rawmag;
+ filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*rawmag;
+ filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*rawmag;
+     
+ % Calculate filtered magnitude
+ handles.magfil_dx = [handles.magfil_dx(2:end); filtmag_dx];
+ handles.magfil_dy = [handles.magfil_dy(2:end); filtmag_dy];
+ handles.magfil_dz = [handles.magfil_dz(2:end); filtmag_dz];
+
+ % Put new filtered data on end of vector and shift old data up 1 spot
+ plot(handles.index,handles.magfil_dx,'b'); %,handles.index,handles.magfil_dy,'k');
+ % Plot raw and filtered data
+
  %legend('raw data','filtered data');
  axis([0 handles.bufferlength -1 10]);
  % Set axis limits

@@ -19,7 +19,6 @@ s.Location = [50 300];
 s.State = 'roaming';
 
 % meteorite sprites
-
 a = SpriteKit.Sprite('a');
 a.initState('on','img/meteorite.png',true);
 a.initState('explosion','img/explosion.png',true);

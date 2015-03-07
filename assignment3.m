@@ -58,7 +58,7 @@ handles.comPort = 'COM13';
 handles.bufferlength = 200;
 %handles.magrawdata = zeros(handles.bufferlength,1);
 handles.index = 1:handles.bufferlength; % 1 to upto 200 increment by one
-handles.alpha = 0.5;
+handles.alpha = 0.1;
 
 handles.magraw_dx = zeros(handles.bufferlength,1);
 handles.magraw_dy = zeros(handles.bufferlength,1);
@@ -70,6 +70,8 @@ handles.magfil_dz = zeros(handles.bufferlength,1);
 
 %handles.magfiltdata = zeros(handles.bufferlength,1);
 G = SpriteKit.Game.instance('Title','Galaxy','Size',[800 400]);
+% bkg = SpriteKit.Background('img/galaxy.png');
+% bkg.Scale = 2;
 % Update handles structure
 guidata(hObject, handles);
 
@@ -145,9 +147,16 @@ if get(handles.start,'UserData')
     
     G = SpriteKit.Game.instance('Title','Galaxy','Size',[800 400]);
     bkg = SpriteKit.Background('img/galaxy.png');
-    bkg.Scale = 1.8;
+    bkg.Scale = 3;
     addBorders(G);
-
+    
+    x_max = 800;
+    y_max = 400;
+    xstart = 300;
+    ystart = 25;
+    
+    axes(handles.axes1);
+    
     scale_1 = 1.2;
     scale_2 = 0.4;
 
@@ -164,35 +173,40 @@ if get(handles.start,'UserData')
     a = SpriteKit.Sprite('a');
     a.initState('on','img/meteorite.png',true);
     a.initState('explosion','img/explosion.png',true);
-    a.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    %a.Location = [randi([300 x_max]) randi([25 G.Size(2)-25])];
+    a.Location = [randi([xstart x_max]) randi([ystart y_max])];
     a.Scale = scale_1;
     a.State = 'on';
 
     b = SpriteKit.Sprite('b');
     b.initState('on','img/meteorite.png',true);
     b.initState('explosion','img/explosion.png',true);
-    b.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    %b.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    b.Location = [randi([xstart x_max]) randi([ystart y_max])];
     b.Scale = scale_1;
     b.State = 'on';
 
     c = SpriteKit.Sprite('c');
     c.initState('on','img/meteorite.png',true);
     c.initState('explosion','img/explosion.png',true);
-    c.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    %c.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    c.Location = [randi([xstart x_max]) randi([ystart y_max])];
     c.Scale = scale_1;
     c.State = 'on';
 
     d = SpriteKit.Sprite('d');
     d.initState('on','img/meteorite.png',true);
     d.initState('explosion','img/explosion.png',true);
-    d.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    %d.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    d.Location = [randi([xstart x_max]) randi([ystart y_max])];
     d.Scale = scale_1;
     d.State = 'on';
 
     e = SpriteKit.Sprite('e');
     e.initState('on','img/meteorite.png',true);
     e.initState('explosion','img/explosion.png',true);
-    e.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    %e.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    e.Location = [randi([xstart x_max]) randi([ystart y_max])];
     e.Scale = scale_1;
     e.State = 'on';
 
@@ -200,8 +214,10 @@ if get(handles.start,'UserData')
     addprop(s,'accel');
     s.accel = [0 0];
     
+    % delete(G);
+    
 else
-    % spriteKit.delete(G);
+    
     
 end
 
@@ -210,38 +226,38 @@ end
     while (get(handles.start,'UserData'))
 
     % Read accel data
-    %  [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
-    %  % Calculate magnitude from raw data
-    %  rawmag = sqrt(gx^2+gy^2+gz^2);
-
-    %  
-    %  % update the vectors with raw data
-    %  handles.magraw_dx = [handles.magraw_dx(2:end);gx];
-    %  handles.magraw_dy = [handles.magraw_dy(2:end);gy];
-    %  handles.magraw_dz = [handles.magraw_dz(2:end);gz];
-    %  
-    %  % setup the filters  
-    %  filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*rawmag;
-    %  filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*rawmag;
-    %  filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*rawmag;
-    %      
-    %  % Calculate filtered magnitude
-    %  handles.magfil_dx = [handles.magfil_dx(2:end); filtmag_dx];
-    %  handles.magfil_dy = [handles.magfil_dy(2:end); filtmag_dy];
-    %  handles.magfil_dz = [handles.magfil_dz(2:end); filtmag_dz];
-    % 
-    %  % Put new filtered data on end of vector and shift old data up 1 spot
-    %  plot(handles.index,handles.magfil_dx,'b'); %,handles.index,handles.magfil_dy,'k');
-    %  % Plot raw and filtered data
-    % 
-    %  %legend('raw data','filtered data');
-    %  axis([0 handles.bufferlength -1 10]);
-     % Set axis limits
+%      [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
+%     %  % Calculate magnitude from raw data
+%     %  rawmag = sqrt(gx^2+gy^2+gz^2);
+% 
+%     %  
+%     %  % update the vectors with raw data
+%     %  handles.magraw_dx = [handles.magraw_dx(2:end);gx];
+%     %  handles.magraw_dy = [handles.magraw_dy(2:end);gy];
+%     %  handles.magraw_dz = [handles.magraw_dz(2:end);gz];
+%     %  
+%     %  put filtered data to the end of a vector and shift it by 1  
+%      filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx
+%      filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy
+%      filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*gz;
+%     %      
+%     %  Calculate filtered magnitude
+%      handles.magfil_dx = [handles.magfil_dx(2:end); filtmag_dx];
+%      handles.magfil_dy = [handles.magfil_dy(2:end); filtmag_dy];
+%      handles.magfil_dz = [handles.magfil_dz(2:end); filtmag_dz];
+%     % 
+%     %  % Put new filtered data on end of vector and shift old data up 1 spot
+%     %  plot(handles.index,handles.magfil_dx,'b'); %,handles.index,handles.magfil_dy,'k');
+%     %  % Plot raw and filtered data
+%     % 
+%     %  %legend('raw data','filtered data');
+%      axis([0 800 0 400]);
+%      % Set axis limits
      
      %% game controlls
      
          
-     s.accel = s.accel*0.97;
+     s.accel = s.accel*0.75;
      L = s.Location;
      L = L + s.accel;
      s.Location = L;
@@ -261,31 +277,99 @@ end
      e.Location(1) = e.Location(1)-1;
      
      if a.Location(1) < 0
-        a.Location = [randi([25 G.Size(2)-35])+650 randi([G.Size(1)-100])];
+        a.Location = [800 randi([100 400])];
         a.State = 'on';
         a.Scale = scale_1;
     elseif b.Location(1) < 0
-        b.Location = [randi([25 G.Size(2)-35])+650 randi([G.Size(1)-100])];           
+        b.Location = [800 randi([100 400])];           
         b.State = 'on';
         b.Scale = scale_1;
     else
     end
         
     if c.Location(1) < 0                
-        c.Location = [randi([25 G.Size(2)-35])+650 randi([G.Size(1)-100])];
+        c.Location = [800 randi([100 400])];
         c.State = 'on';
         c.Scale = scale_1;
     elseif d.Location(1) < 0
-        d.Location = [randi([25 G.Size(2)-35])+650 randi([G.Size(1)-100])];
+        d.Location = [800 randi([100 400])];
         d.State = 'on';
         d.Scale = scale_1;
     else            
     end
     if e.Location(1) < 0
-        e.Location = [randi([25 G.Size(2)-35])+650 randi([G.Size(1)-100])];
+        e.Location = [800 randi([100 400])];
         e.State = 'on';
         e.Scale = scale_1;
-     end
+    end
+     
+    % collision detection
+    [collide,target] = SpriteKit.Physics.hasCollision(s);
+        if collide
+            switch target.ID                
+                case 'topborder'
+                    %s.State = 'spring';
+                    s.accel(2) = -abs(s.accel(2));
+                case 'bottomborder'
+                    %s.State = 'autumn';
+                    s.accel(2) = abs(s.accel(2));
+                case 'leftborder'
+                    %s.State = 'winter';
+                    s.accel(1) = abs(s.accel(1));
+                case 'rightborder'
+                    %s.State = 'summer';
+                    s.accel(1) = -abs(s.accel(1));
+                case 'a'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
+                    a.State = 'explosion';
+                    a.Scale = scale_2;
+                case 'b'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
+                    b.State = 'explosion';
+                    b.Scale = scale_2;
+                case 'c'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
+                    c.State = 'explosion';
+                    c.Scale = scale_2;
+                case 'd'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
+                    d.State = 'explosion';
+                    d.Scale = scale_2;
+                case 'e'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
+                    e.State = 'explosion';
+                    e.Scale = scale_2;             
+            end
+        end       
+        
+      % control the ship using accelerometer data
+%       
+%        mag = 5;
+%        thresh = 0.3;
+%        if filtmag_dx > thresh
+%            s.accel = s.accel + [0 mag];
+%        elseif filtmag_dx < -thresh
+%            s.accel = s.accel - [0 10];
+%        else
+%        end
+%        
+%        if filtmag_dy > thresh
+%            s.accel = s.accel - [10 0];
+%        elseif filtmag_dy < -thresh
+%            s.accel = s.accel + [10 0];
+%        else
+%        end
+    
      
      drawnow % Force redraw of figure
      guidata(hObject, handles);

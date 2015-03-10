@@ -58,7 +58,7 @@ handles.comPort = 'COM13';
 handles.bufferlength = 200;
 %handles.magrawdata = zeros(handles.bufferlength,1);
 handles.index = 1:handles.bufferlength; % 1 to upto 200 increment by one
-handles.alpha = 0.1;
+handles.alpha = 0.5;
 
 handles.magraw_dx = zeros(handles.bufferlength,1);
 handles.magraw_dy = zeros(handles.bufferlength,1);
@@ -226,35 +226,22 @@ end
     while (get(handles.start,'UserData'))
 
     % Read accel data
-%      [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
-%     %  % Calculate magnitude from raw data
-%     %  rawmag = sqrt(gx^2+gy^2+gz^2);
-% 
-%     %  
-%     %  % update the vectors with raw data
-%     %  handles.magraw_dx = [handles.magraw_dx(2:end);gx];
-%     %  handles.magraw_dy = [handles.magraw_dy(2:end);gy];
-%     %  handles.magraw_dz = [handles.magraw_dz(2:end);gz];
-%     %  
-%     %  put filtered data to the end of a vector and shift it by 1  
-%      filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx
-%      filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy
-%      filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*gz;
-%     %      
-%     %  Calculate filtered magnitude
-%      handles.magfil_dx = [handles.magfil_dx(2:end); filtmag_dx];
-%      handles.magfil_dy = [handles.magfil_dy(2:end); filtmag_dy];
-%      handles.magfil_dz = [handles.magfil_dz(2:end); filtmag_dz];
-%     % 
-%     %  % Put new filtered data on end of vector and shift old data up 1 spot
-%     %  plot(handles.index,handles.magfil_dx,'b'); %,handles.index,handles.magfil_dy,'k');
-%     %  % Plot raw and filtered data
-%     % 
-%     %  %legend('raw data','filtered data');
-%      axis([0 800 0 400]);
-%      % Set axis limits
+     [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
      
-     %% game controlls
+    %  put filtered data to the end of a vector and shift it by 1  
+     filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx
+     filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy
+     filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*gz;
+    %      
+    %  Calculate filtered magnitude
+     handles.magfil_dx = [handles.magfil_dx(2:end); filtmag_dx];
+     handles.magfil_dy = [handles.magfil_dy(2:end); filtmag_dy];
+     handles.magfil_dz = [handles.magfil_dz(2:end); filtmag_dz];
+   
+     axis([0 800 0 400]);
+     % Set axis limits
+     
+     % game controlls
      
          
      s.accel = s.accel*0.75;
@@ -353,22 +340,23 @@ end
         end       
         
       % control the ship using accelerometer data
-%       
-%        mag = 5;
-%        thresh = 0.3;
-%        if filtmag_dx > thresh
-%            s.accel = s.accel + [0 mag];
-%        elseif filtmag_dx < -thresh
-%            s.accel = s.accel - [0 10];
-%        else
-%        end
-%        
-%        if filtmag_dy > thresh
-%            s.accel = s.accel - [10 0];
-%        elseif filtmag_dy < -thresh
-%            s.accel = s.accel + [10 0];
-%        else
-%        end
+      
+       mag = 5;
+       thresh = 1;
+       thresh_y = 7;
+       if filtmag_dx > thresh
+           s.accel = s.accel + [0 mag];
+       elseif filtmag_dx < -thresh
+           s.accel = s.accel - [0 mag];
+       else
+       end
+       
+       if filtmag_dy > thresh_y
+           s.accel = s.accel - [mag 0];
+       elseif filtmag_dy < -thresh_y
+           s.accel = s.accel + [mag 0];
+       else
+       end
     
      
      drawnow % Force redraw of figure

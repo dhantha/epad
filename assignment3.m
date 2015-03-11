@@ -54,7 +54,7 @@ function assignment3_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for assignment3
 handles.output = hObject;
-handles.comPort = 'COM11';
+handles.comPort = 'COM13';
 handles.bufferlength = 200;
 %handles.magrawdata = zeros(handles.bufferlength,1);
 handles.index = 1:handles.bufferlength; % 1 to upto 200 increment by one
@@ -214,10 +214,78 @@ if get(handles.start,'UserData')
     addprop(s,'accel');
     s.accel = [0 0];
     
-    % delete(G);
+%     if(~get(handles.start,'UserData'))
+%         delete(G);
+%         return;
+%     end
     
 else
+     G = SpriteKit.Game.instance('Title','Galaxy','Size',[800 400]);
+    bkg = SpriteKit.Background('img/galaxy.png');
+    bkg.Scale = 3;
+    addBorders(G);
     
+    x_max = 800;
+    y_max = 400;
+    xstart = 300;
+    ystart = 25;
+    
+    axes(handles.axes1);
+    
+    scale_1 = 1.2;
+    scale_2 = 0.4;
+
+    % spaceship 
+    s = SpriteKit.Sprite('ship');
+    s.initState('roaming','img/space.png',true);
+    s.initState('explosion','img/explosion.png',true);
+    s.Scale = scale_1;
+    s.Location = [50 300];
+    s.State = 'roaming';
+
+    % meteorite sprites
+
+    a = SpriteKit.Sprite('a');
+    a.initState('on','img/meteorite.png',true);
+    a.initState('explosion','img/explosion.png',true);
+    %a.Location = [randi([300 x_max]) randi([25 G.Size(2)-25])];
+    a.Location = [randi([xstart x_max]) randi([ystart y_max])];
+    a.Scale = scale_1;
+    a.State = 'on';
+
+    b = SpriteKit.Sprite('b');
+    b.initState('on','img/meteorite.png',true);
+    b.initState('explosion','img/explosion.png',true);
+    %b.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    b.Location = [randi([xstart x_max]) randi([ystart y_max])];
+    b.Scale = scale_1;
+    b.State = 'on';
+
+    c = SpriteKit.Sprite('c');
+    c.initState('on','img/meteorite.png',true);
+    c.initState('explosion','img/explosion.png',true);
+    %c.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    c.Location = [randi([xstart x_max]) randi([ystart y_max])];
+    c.Scale = scale_1;
+    c.State = 'on';
+
+    d = SpriteKit.Sprite('d');
+    d.initState('on','img/meteorite.png',true);
+    d.initState('explosion','img/explosion.png',true);
+    %d.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    d.Location = [randi([xstart x_max]) randi([ystart y_max])];
+    d.Scale = scale_1;
+    d.State = 'on';
+
+    e = SpriteKit.Sprite('e');
+    e.initState('on','img/meteorite.png',true);
+    e.initState('explosion','img/explosion.png',true);
+    %e.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
+    e.Location = [randi([xstart x_max]) randi([ystart y_max])];
+    e.Scale = scale_1;
+    e.State = 'on';
+    delete(G);
+    return;
     
 end
 
@@ -229,8 +297,8 @@ end
      [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
      
     %  put filtered data to the end of a vector and shift it by 1  
-     filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx;
-     filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy;
+     filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx
+     filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy
      filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*gz;
     %      
     %  Calculate filtered magnitude

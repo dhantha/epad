@@ -54,7 +54,7 @@ function assignment3_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for assignment3
 handles.output = hObject;
-handles.comPort = 'COM13';
+handles.comPort = 'COM11';
 handles.bufferlength = 200;
 %handles.magrawdata = zeros(handles.bufferlength,1);
 handles.index = 1:handles.bufferlength; % 1 to upto 200 increment by one
@@ -229,8 +229,8 @@ end
      [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
      
     %  put filtered data to the end of a vector and shift it by 1  
-     filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx
-     filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy
+     filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx;
+     filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy;
      filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*gz;
     %      
     %  Calculate filtered magnitude
@@ -241,9 +241,7 @@ end
      axis([0 800 0 400]);
      % Set axis limits
      
-     % game controlls
-     
-         
+     % game controlls         
      s.accel = s.accel*0.75;
      L = s.Location;
      L = L + s.accel;
@@ -342,18 +340,18 @@ end
       % control the ship using accelerometer data
       
        mag = 5;
-       thresh = 1;
-       thresh_y = 7;
+       thresh = 0.8;
+       % thresh_y = 1;
        if filtmag_dx > thresh
-           s.accel = s.accel + [0 mag];
+           s.accel = s.accel + [0 mag]; % position on x maps to y
        elseif filtmag_dx < -thresh
            s.accel = s.accel - [0 mag];
        else
        end
        
-       if filtmag_dy > thresh_y
-           s.accel = s.accel - [mag 0];
-       elseif filtmag_dy < -thresh_y
+       if filtmag_dy > thresh
+           s.accel = s.accel - [mag 0]; % position on y maps to x
+       elseif filtmag_dy < -thresh
            s.accel = s.accel + [mag 0];
        else
        end

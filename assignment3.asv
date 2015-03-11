@@ -309,7 +309,7 @@ end
         e.Location = [800 randi([100 400])];
         e.State = 'on';
         e.Scale = scale_1;
-        i = i + increment;
+         i = i + increment;
         set(handles.edit2,'String',num2str(i))
     end
      
@@ -329,31 +329,36 @@ end
                 case 'rightborder'
                     %s.State = 'summer';
                     s.accel(1) = -abs(s.accel(1));
-                case 'a'      
+                case 'a'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
                     a.State = 'explosion';
                     a.Scale = scale_2;
-                    i = i - increment;
-                    set(handles.edit2,'String',num2str(i))
                 case 'b'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
                     b.State = 'explosion';
                     b.Scale = scale_2;
-                    i = i - increment;
-                    set(handles.edit2,'String',num2str(i))
-                case 'c'                    
+                case 'c'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
                     c.State = 'explosion';
                     c.Scale = scale_2;
-                    i = i - increment;
-                    set(handles.edit2,'String',num2str(i))
-                case 'd'                    
+                case 'd'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
                     d.State = 'explosion';
                     d.Scale = scale_2;
-                    i = i - increment;
-                    set(handles.edit2,'String',num2str(i))
-                case 'e'                    
+                case 'e'
+%                     s.State = 'explosion';
+%                     s.Scale = scale_2;
+                    
                     e.State = 'explosion';
                     e.Scale = scale_2;             
-                    i = i - increment;
-                    set(handles.edit2,'String',num2str(i))
             end
         end       
         

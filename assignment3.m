@@ -171,8 +171,8 @@ if get(handles.start,'UserData')
     
     set(handles.edit2,'String',num2str(i))
     
-    G = SpriteKit.Game.instance('Title','Galaxy','Size',[800 400]);
-    bkg = SpriteKit.Background('img/galaxy.png');
+    G = SpriteKit.Game.instance('Title','Galaxy','Size',[800 400]); % sets the canvas
+    bkg = SpriteKit.Background('img/galaxy.png'); % sets the background
     bkg.Scale = 3;
     addBorders(G);
         
@@ -195,11 +195,9 @@ if get(handles.start,'UserData')
     s.State = 'roaming';
 
     % meteorite sprites
-
     a = SpriteKit.Sprite('a');
     a.initState('on','img/meteorite.png',true);
     a.initState('explosion','img/explosion.png',true);
-    %a.Location = [randi([300 x_max]) randi([25 G.Size(2)-25])];
     a.Location = [randi([xstart x_max]) randi([ystart y_max])];
     a.Scale = scale_1;
     a.State = 'on';
@@ -207,7 +205,6 @@ if get(handles.start,'UserData')
     b = SpriteKit.Sprite('b');
     b.initState('on','img/meteorite.png',true);
     b.initState('explosion','img/explosion.png',true);
-    %b.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
     b.Location = [randi([xstart x_max]) randi([ystart y_max])];
     b.Scale = scale_1;
     b.State = 'on';
@@ -215,7 +212,6 @@ if get(handles.start,'UserData')
     c = SpriteKit.Sprite('c');
     c.initState('on','img/meteorite.png',true);
     c.initState('explosion','img/explosion.png',true);
-    %c.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
     c.Location = [randi([xstart x_max]) randi([ystart y_max])];
     c.Scale = scale_1;
     c.State = 'on';
@@ -223,7 +219,6 @@ if get(handles.start,'UserData')
     d = SpriteKit.Sprite('d');
     d.initState('on','img/meteorite.png',true);
     d.initState('explosion','img/explosion.png',true);
-    %d.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
     d.Location = [randi([xstart x_max]) randi([ystart y_max])];
     d.Scale = scale_1;
     d.State = 'on';
@@ -231,21 +226,14 @@ if get(handles.start,'UserData')
     e = SpriteKit.Sprite('e');
     e.initState('on','img/meteorite.png',true);
     e.initState('explosion','img/explosion.png',true);
-    %e.Location = [randi([25 G.Size(1)-25]) randi([25 G.Size(2)-25])];
     e.Location = [randi([xstart x_max]) randi([ystart y_max])];
     e.Scale = scale_1;
     e.State = 'on';
-
-
+    
     addprop(s,'accel');
     s.accel = [0 0];
-    
-%     if(~get(handles.start,'UserData'))
-%         delete(G);
-%         return;
-%     end
-    
-else
+       
+else %is user hits the stop button clear the canvas 
      G = SpriteKit.Game.instance('Title','Galaxy','Size',[800 400]);
     bkg = SpriteKit.Background('img/galaxy.png');
     bkg.Scale = 3;
@@ -267,7 +255,7 @@ end
      filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx;
      filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy;
      filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*gz;
-    %      
+         
     %  Calculate filtered magnitude
      handles.magfil_dx = [handles.magfil_dx(2:end); filtmag_dx];
      handles.magfil_dy = [handles.magfil_dy(2:end); filtmag_dy];
@@ -282,20 +270,24 @@ end
      L = L + s.accel;
      s.Location = L;
 
+     % rotate meteorites
      a.Angle = a.Angle-1;
      b.Angle = b.Angle-1;
      c.Angle = c.Angle-1;
      d.Angle = d.Angle-1;
      e.Angle = e.Angle-1;
 
+     % rotate the background
      bkg.scroll('right',1);
 
+     % move the meteorites accross the canvas 
      a.Location(1) = a.Location(1)-1;
      b.Location(1) = b.Location(1)-1;
      c.Location(1) = c.Location(1)-1;
      d.Location(1) = d.Location(1)-1;
      e.Location(1) = e.Location(1)-1;
      
+     % if meteorites are out of the frame set it back to the frame 
      if a.Location(1) < 0
         a.Location = [800 randi([100 400])];
         a.State = 'on';
@@ -336,19 +328,17 @@ end
     % collision detection
     [collide,target] = SpriteKit.Physics.hasCollision(s);
         if collide
-            switch target.ID                
-                case 'topborder'
-                    %s.State = 'spring';
+            switch target.ID    
+                % border detection 
+                case 'topborder'                    
                     s.accel(2) = -abs(s.accel(2));
-                case 'bottomborder'
-                    %s.State = 'autumn';
+                case 'bottomborder'                    
                     s.accel(2) = abs(s.accel(2));
-                case 'leftborder'
-                    %s.State = 'winter';
+                case 'leftborder'                    
                     s.accel(1) = abs(s.accel(1));
-                case 'rightborder'
-                    %s.State = 'summer';
+                case 'rightborder'                    
                     s.accel(1) = -abs(s.accel(1));
+                % collision detection with meteorites 
                 case 'a'      
                     a.State = 'explosion';
                     a.Scale = scale_2;
@@ -381,7 +371,7 @@ end
       
        mag = 5;
        thresh = 0.8;
-       % thresh_y = 1;
+       
        if filtmag_dx > thresh
            s.accel = s.accel + [0 mag]; % position on x maps to y
        elseif filtmag_dx < -thresh
@@ -394,8 +384,7 @@ end
        elseif filtmag_dy < -thresh
            s.accel = s.accel + [mag 0];
        else
-       end
-    
+       end   
      
      drawnow % Force redraw of figure
      guidata(hObject, handles);

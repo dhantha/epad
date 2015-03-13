@@ -54,7 +54,7 @@ function assignment3_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for assignment3
 handles.output = hObject;
-handles.comPort = 'COM13';
+handles.comPort = 'COM14';
 handles.bufferlength = 200;
 %handles.magrawdata = zeros(handles.bufferlength,1);
 handles.index = 1:handles.bufferlength; % 1 to upto 200 increment by one
@@ -135,6 +135,26 @@ set(handles.stop,'UserData',1);
 closeSerial
 %guidata(hObject,handles);
 
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 
 
@@ -244,8 +264,8 @@ end
      [gx gy gz]= readAcc(handles.accelerometer,handles.calco);
      
     %  put filtered data to the end of a vector and shift it by 1  
-     filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx
-     filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy
+     filtmag_dx = (1 - handles.alpha)*handles.magfil_dx(end) + handles.alpha*gx;
+     filtmag_dy = (1 - handles.alpha)*handles.magfil_dy(end) + handles.alpha*gy;
      filtmag_dz = (1 - handles.alpha)*handles.magfil_dz(end) + handles.alpha*gz;
     %      
     %  Calculate filtered magnitude
@@ -383,23 +403,4 @@ end
 
 
 
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
